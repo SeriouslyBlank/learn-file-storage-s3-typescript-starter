@@ -10,31 +10,8 @@ type Thumbnail = {
   mediaType: string;
 };
 
-const videoThumbnails: Map<string, Thumbnail> = new Map();
 
-export async function handlerGetThumbnail(cfg: ApiConfig, req: BunRequest) {
-  const { videoId } = req.params as { videoId?: string };
-  if (!videoId) {
-    throw new BadRequestError("Invalid video ID");
-  }
 
-  const video = getVideo(cfg.db, videoId);
-  if (!video) {
-    throw new NotFoundError("Couldn't find video");
-  }
-
-  const thumbnail = videoThumbnails.get(videoId);
-  if (!thumbnail) {
-    throw new NotFoundError("Thumbnail not found");
-  }
-
-  return new Response(thumbnail.data, {
-    headers: {
-      "Content-Type": thumbnail.mediaType,
-      "Cache-Control": "no-store",
-    },
-  });
-}
 
 export async function handlerUploadThumbnail(cfg: ApiConfig, req: BunRequest) {
   const { videoId } = req.params as { videoId?: string };
@@ -74,12 +51,13 @@ export async function handlerUploadThumbnail(cfg: ApiConfig, req: BunRequest) {
 
   const imageData = await ThumbnailData.arrayBuffer();
 
-  const thumb:Thumbnail = {data: imageData, mediaType: mType}
+  const imgBuffer = Buffer.from(imageData).toString("base64")
 
+  const dataURL = `data:${mType};base64,${imgBuffer}`
 
-  videoThumbnails.set(videoId, thumb)
+    
 
-  videoMeta.thumbnailURL = `http://localhost:${cfg.port}/api/thumbnails/${videoId}`
+  videoMeta.thumbnailURL = dataURL
 
   updateVideo(cfg.db, videoMeta)
 
