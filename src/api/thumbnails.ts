@@ -53,7 +53,13 @@ export async function handlerUploadThumbnail(cfg: ApiConfig, req: BunRequest) {
 
   if (!mType){
     throw new BadRequestError(`Missing Content-Type for thumbnail`)
+  } else if (mType != "image/jpeg" && mType != "image/png") {
+    throw new BadRequestError(`Media type isnt JPEG or PNG`)
   }
+
+
+
+
 
   const ext = mediaTypeToExt(mType)
 
