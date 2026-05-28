@@ -13,7 +13,7 @@ type Thumbnail = {
   mediaType: string;
 };
 
-
+const MAX_UPLOAD_SIZE = 10; //10MB
 
 
 export async function handlerUploadThumbnail(cfg: ApiConfig, req: BunRequest) {
@@ -35,7 +35,6 @@ export async function handlerUploadThumbnail(cfg: ApiConfig, req: BunRequest) {
     throw new BadRequestError(`Object is not an instance of File`)
   }
 
-  const MAX_UPLOAD_SIZE = 10;
 
   const file_size = MAX_UPLOAD_SIZE * 1024 * 1024;
 
@@ -57,9 +56,6 @@ export async function handlerUploadThumbnail(cfg: ApiConfig, req: BunRequest) {
   } else if (mType != "image/jpeg" && mType != "image/png") {
     throw new BadRequestError(`Media type isnt JPEG or PNG`)
   }
-
-
-
 
 
   const ext = mediaTypeToExt(mType)
